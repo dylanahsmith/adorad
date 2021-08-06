@@ -29,10 +29,10 @@ Copyright (c) 2021 Jason Dsouza <@jasmcaus>
     #include <direct.h>
 #endif // CSTL_OS_WINDOWS
 
-static Buff* os_get_cwd();
-static Buff* os_path_dirname(Buff* path);
-static Buff* os_path_extname(Buff* path);
-static Buff* os_path_join(Buff* path1, Buff* path2);
+static cstlBuffer* os_get_cwd();
+static cstlBuffer* os_path_dirname(cstlBuffer* path);
+static cstlBuffer* os_path_extname(cstlBuffer* path);
+static cstlBuffer* os_path_join(cstlBuffer* path1, cstlBuffer* path2);
 static bool os_is_sep(char ch);
 
 #ifndef CSTL_OS_FUNC_ALIASES
@@ -42,7 +42,7 @@ static bool os_is_sep(char ch);
     #define ospj    os_path_join
 #endif // CSTL_OS_FUNC_ALIASES
 
-static Buff* os_get_cwd() {
+static cstlBuffer* os_get_cwd() {
 #if defined(CSTL_OS_WINDOWS)
     // This (or its equivalent) is not defined in any include in Windows as far as I've come across
     #define PATH_MAX 4096
@@ -52,7 +52,7 @@ static Buff* os_get_cwd() {
         fprintf(stderr, "Unable to `os_get_cwd()`. 'getcwd()' failed");
         exit(1);
     }
-    Buff* buff = buff_new(result);
+    cstlBuffer* buff = buff_new(result);
     return buff;
 #elif defined(CSTL_OS_POSIX)
     long n;
@@ -60,14 +60,14 @@ static Buff* os_get_cwd() {
 
     n = pathconf(".", _PC_PATH_MAX);
     CSTL_CHECK_NE(n, -1);
-    buf = (char*)calloc(n, sizeof(*buf));
+    buf = cast(char*)calloc(n, sizeof(*buf));
     CSTL_CHECK_NOT_NULL(buf, "calloc failed. Out of memory");
     char* result = getcwd(buf, n);
     if(!result) {
         fprintf(stderr, "Unable to `os_get_cwd()`. 'getcwd()' failed");
         exit(1);
     }
-    Buff* buff = buff_new(buf);
+    cstlBuffer* buff = buff_new(buf);
     return buff;
 #else
     #error "No `os_get_cwd()` implementation supported for your platform."
@@ -75,28 +75,30 @@ static Buff* os_get_cwd() {
 #endif // CSTL_OS_WINDOWS
 }
 
-static Buff* __os_dirname_basename(Buff* path, bool is_basename) {
-    UInt64 length = path->length;
+static cstlBuffer* __os_dirname_basename(cstlBuffer* path, bool is_basename) {
+    UInt64 length = path->len;
     if(!length)
         return path;
 
-    Buff* result = buff_new(null);
+    cstlBuffer* result = buff_new(null);
     char* end = buff_end(path);
-    if(!is_basename) {
-        // If the last character is a `sep`, `path` is the dirname
-        if(os_is_sep(*end))
-            return path;
 
-        // If there is no `sep` in `path`, the dirname is empty
-        if(!(strstr(path->data, "/") || strstr(path->data, "\\")))
-            return result;
-        
-        Buff* rev = buff_rev(path);
+    // dirname
+    if(!is_basename) {
+        cstlBuffer* rev = buff_rev(path);
+
+        // The `/` or `\\` is not so important in getting the dirname, but it does interfere with `strchr`, so
+        // we skip over it (if present)
+        if(*rev->data == *(CSTL_OS_SEP))
+            rev->data++;
         char* rev_dir = strchr(rev->data, *(CSTL_OS_SEP));
         buff_set(result, rev_dir);
         result = buff_rev(result);
         buff_free(rev);
-    } else {
+    } 
+
+    // basename
+    else {
         // If the last character is a `sep`, `basename` is empty
         if(os_is_sep(*end))
             return buff_new(null);
@@ -105,7 +107,7 @@ static Buff* __os_dirname_basename(Buff* path, bool is_basename) {
         if(!(strstr(path->data, "/") || strstr(path->data, "\\")))
             return path;
         
-        Buff* rev = buff_rev(path);
+        cstlBuffer* rev = buff_rev(path);
         for(UInt64 i = 0; i<length; i++) {
             if(os_is_sep(*(rev->data + i))) {
                 *(rev->data + i) = nullchar;
@@ -114,22 +116,22 @@ static Buff* __os_dirname_basename(Buff* path, bool is_basename) {
         }
         buff_set(result, rev->data);
         result = buff_rev(result);
-        free(rev);
+        buff_free(rev);
     }
     
     return result;
 }
 
-static Buff* os_get_dirname(Buff* path) {
+static cstlBuffer* os_path_dirname(cstlBuffer* path) {
     return __os_dirname_basename(path, false);
 }
 
-static Buff* os_get_basename(Buff* path) {
+static cstlBuffer* os_path_basename(cstlBuffer* path) {
     return __os_dirname_basename(path, true);
 }
 
-static Buff* os_path_extname(Buff* path) {
-    Buff* basename = os_get_basename(path);
+static cstlBuffer* os_path_extname(cstlBuffer* path) {
+    cstlBuffer* basename = os_path_basename(path);
     if(!strcmp(basename->data, ""))
         return basename;
     
@@ -144,8 +146,8 @@ static Buff* os_path_extname(Buff* path) {
 }
 
 
-static Buff* os_path_join(Buff* path1, Buff* path2) {
-    UInt64 length = path1->length;
+static cstlBuffer* os_path_join(cstlBuffer* path1, cstlBuffer* path2) {
+    UInt64 length = path1->len;
     if(!length)
         return path1;
         
