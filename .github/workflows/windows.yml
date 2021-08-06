@@ -43,8 +43,16 @@ jobs:
 
       - name: Test
         run: |
-          cd build/test ; dir; ctest -j 10 -C ${{ matrix.build_type }} --output-on-failure
-          cd .. ; dir; cd bin/ ; dir; ./AdoradInternalTestsWithMain.exe
+          cd build/test 
+          ctest -j 10 -C ${{ matrix.build_type }} --output-on-failure
+          echo ' <<<<<<<<<<<<<<<<<<<<<<< cd .. <<<<<<<<<<<<<<<<<<<<<<<'
+          cd .. 
+          echo ' <<<<<<<<<<<<<<<<<<<<<<< cd bin/  <<<<<<<<<<<<<<<<<<<<<<<'
+          cd bin/ 
+          echo ' <<<<<<<<<<<<<<<<<<<<<<< ./AdoradInternalTestsWithMain <<<<<<<<<<<<<<<<<<<<<<<'
+          dir
+          ./AdoradInternalTestsWithMain
+          echo ' <<<<<<<<<<<<<<<<<<<<<<< ./AdoradInternalTestsWithMain <<<<<<<<<<<<<<<<<<<<<<<'
 
   # Slight hack when it comes to building on using Windows on Github runners:
   # CMake apparently defaults to an older Windows SDK Version that has quite a few bugs which lead to compilation
@@ -95,8 +103,18 @@ jobs:
 
     - name: Test
       run: |
-        cd build/test ; dir; ctest -j 10 -C ${{ matrix.build_type }} --output-on-failure
-          cd .. ; dir; cd bin/${{ matrix.build_type }} ; dir; ./AdoradInternalTestsWithMain.exe
+        cd build/test 
+        ctest -j 10 -C ${{ matrix.build_type }} --output-on-failure
+        echo ' <<<<<<<<<<<<<<<<<<<<<<< PYTHON <<<<<<<<<<<<<<<<<<<<<<<'
+        python ../../tools/tests/before_tests_run_ci.py ${{ matrix.build_type }}
+        echo ' <<<<<<<<<<<<<<<<<<<<<<< cd .. <<<<<<<<<<<<<<<<<<<<<<<'
+        cd .. 
+        echo ' <<<<<<<<<<<<<<<<<<<<<<< cd bin/  <<<<<<<<<<<<<<<<<<<<<<<'
+        cd bin/ 
+        echo ' <<<<<<<<<<<<<<<<<<<<<<< ./AdoradInternalTestsWithMain <<<<<<<<<<<<<<<<<<<<<<<'
+        dir
+        bash -c "./AdoradInternalTestsWithMain"
+        echo ' <<<<<<<<<<<<<<<<<<<<<<< ./AdoradInternalTestsWithMain <<<<<<<<<<<<<<<<<<<<<<<'
 
 
   MSVC2017_latest:
@@ -118,8 +136,18 @@ jobs:
 
     - name: Test
       run: |
-        cd build/test ; dir; ctest -j 10 -C Release --output-on-failure
-        cd .. ; dir; cd bin/Release ; dir; ./AdoradInternalTestsWithMain.exe
+        cd build/test 
+        ctest -j 10 -C Release --output-on-failure
+        echo ' <<<<<<<<<<<<<<<<<<<<<<< PYTHON <<<<<<<<<<<<<<<<<<<<<<<'
+        python ../../tools/tests/before_tests_run_ci.py Release
+        echo ' <<<<<<<<<<<<<<<<<<<<<<< cd .. <<<<<<<<<<<<<<<<<<<<<<<'
+        cd .. 
+        echo ' <<<<<<<<<<<<<<<<<<<<<<< cd bin/  <<<<<<<<<<<<<<<<<<<<<<<'
+        cd bin/ 
+        echo ' <<<<<<<<<<<<<<<<<<<<<<< ./AdoradInternalTestsWithMain <<<<<<<<<<<<<<<<<<<<<<<'
+        dir
+        bash -c "./AdoradInternalTestsWithMain"
+        echo ' <<<<<<<<<<<<<<<<<<<<<<< ./AdoradInternalTestsWithMain <<<<<<<<<<<<<<<<<<<<<<<'
 
 
   MSVC2019:
@@ -146,13 +174,22 @@ jobs:
 
     - name: Test
       run: |
-        cd build/test ; dir; ctest -j 10 -C ${{ matrix.build_type }} --output-on-failure
-        cd .. ; dir; cd bin/${{ matrix.build_type }} ; dir; ./AdoradInternalTestsWithMain.exe
+        cd build/test 
+        ctest -j 10 -C ${{ matrix.build_type }} --output-on-failure
+        echo ' <<<<<<<<<<<<<<<<<<<<<<< PYTHON <<<<<<<<<<<<<<<<<<<<<<<'
+        python ../../tools/tests/before_tests_run_ci.py ${{ matrix.build_type }}
+        echo ' <<<<<<<<<<<<<<<<<<<<<<< cd .. <<<<<<<<<<<<<<<<<<<<<<<'
+        cd .. 
+        echo ' <<<<<<<<<<<<<<<<<<<<<<< cd bin/  <<<<<<<<<<<<<<<<<<<<<<<'
+        cd bin/ 
+        echo ' <<<<<<<<<<<<<<<<<<<<<<< ./AdoradInternalTestsWithMain <<<<<<<<<<<<<<<<<<<<<<<'
+        dir
+        bash -c "./AdoradInternalTestsWithMain"
+        echo ' <<<<<<<<<<<<<<<<<<<<<<< ./AdoradInternalTestsWithMain <<<<<<<<<<<<<<<<<<<<<<<'
 
 
   MSVC2019_latest:
     runs-on: windows-latest
-
     steps:
     - uses: actions/checkout@v2
     - name: Set up AdoradInternalTests folder
@@ -169,8 +206,18 @@ jobs:
 
     - name: Test
       run: |
-        cd build/test ; dir; ctest -j 10 -C Release --output-on-failure
-        cd .. ; dir; cd bin/Release ; dir; ./AdoradInternalTestsWithMain.exe
+        cd build/test 
+        ctest -j 10 -C Release --output-on-failure
+        echo ' <<<<<<<<<<<<<<<<<<<<<<< PYTHON <<<<<<<<<<<<<<<<<<<<<<<'
+        python ../../tools/tests/before_tests_run_ci.py Release
+        echo ' <<<<<<<<<<<<<<<<<<<<<<< cd .. <<<<<<<<<<<<<<<<<<<<<<<'
+        cd .. 
+        echo ' <<<<<<<<<<<<<<<<<<<<<<< cd bin/  <<<<<<<<<<<<<<<<<<<<<<<'
+        cd bin/ 
+        echo ' <<<<<<<<<<<<<<<<<<<<<<< ./AdoradInternalTestsWithMain <<<<<<<<<<<<<<<<<<<<<<<'
+        dir
+        bash -c "./AdoradInternalTestsWithMain"
+        echo ' <<<<<<<<<<<<<<<<<<<<<<< ./AdoradInternalTestsWithMain <<<<<<<<<<<<<<<<<<<<<<<'
 
 
   Clang:
@@ -202,8 +249,16 @@ jobs:
 
       - name: Test
         run: |
-          cd build/test ; dir; ctest -j 10 -C ${{ matrix.build_type }} --output-on-failure
-          cd .. ; dir; cd bin/ ; dir; ./AdoradInternalTestsWithMain.exe
+          cd build/test 
+          ctest -j 10 -C ${{ matrix.build_type }} --output-on-failure
+          echo ' <<<<<<<<<<<<<<<<<<<<<<< cd .. <<<<<<<<<<<<<<<<<<<<<<<'
+          cd .. 
+          echo ' <<<<<<<<<<<<<<<<<<<<<<< cd bin/  <<<<<<<<<<<<<<<<<<<<<<<'
+          cd bin/ 
+          echo ' <<<<<<<<<<<<<<<<<<<<<<< ./AdoradInternalTestsWithMain <<<<<<<<<<<<<<<<<<<<<<<'
+          dir
+          ./AdoradInternalTestsWithMain
+          echo ' <<<<<<<<<<<<<<<<<<<<<<< ./AdoradInternalTestsWithMain <<<<<<<<<<<<<<<<<<<<<<<'
 
 
   Clang-cl-11:
@@ -231,5 +286,15 @@ jobs:
 
       - name: Test
         run: |
-          cd build/test ; dir; ctest -j 10 -C ${{ matrix.build_type }} --output-on-failure
-          cd .. ; dir; cd bin/${{ matrix.build_type }} ; dir; ./AdoradInternalTestsWithMain.exe
+          cd build/test 
+          ctest -j 10 -C ${{ matrix.build_type }} --output-on-failure
+          echo ' <<<<<<<<<<<<<<<<<<<<<<< PYTHON <<<<<<<<<<<<<<<<<<<<<<<'
+          python ../../tools/tests/before_tests_run_ci.py ${{ matrix.build_type }}
+          echo ' <<<<<<<<<<<<<<<<<<<<<<< cd .. <<<<<<<<<<<<<<<<<<<<<<<'
+          cd .. 
+          echo ' <<<<<<<<<<<<<<<<<<<<<<< cd bin/  <<<<<<<<<<<<<<<<<<<<<<<'
+          cd bin/ 
+          echo ' <<<<<<<<<<<<<<<<<<<<<<< ./AdoradInternalTestsWithMain <<<<<<<<<<<<<<<<<<<<<<<'
+          dir
+          ./AdoradInternalTestsWithMain
+          echo ' <<<<<<<<<<<<<<<<<<<<<<< ./AdoradInternalTestsWithMain <<<<<<<<<<<<<<<<<<<<<<<'
